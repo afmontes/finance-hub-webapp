@@ -41,7 +41,11 @@
         "OUTLOOK_REDIRECT_URI",
         "MIDDAY_ENCRYPTION_KEY",
         "NEXT_PUBLIC_URL",
-        "VERCEL_TARGET_ENV"
+        "VERCEL_TARGET_ENV",
+        "WEBHOOK_SECRET_KEY",
+        "ENGINE_API_URL",
+        "INVOICE_JWT_SECRET",
+        "POLAR_ENVIRONMENT"
       ],
       "inputs": ["$TURBO_DEFAULT$", ".env"],
       "dependsOn": ["^build"],
