@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp:*)",
+      "Bash(bun install:*)",
+      "Bash(curl:*)",
+      "Bash(bun run:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(bun build:*)",
+      "Bash(git push:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(grep:*)"
+    ],
+    "deny": []
+  }
+}

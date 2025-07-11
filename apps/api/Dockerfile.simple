@@ -1,0 +1,33 @@
+# Simple Dockerfile for API deployment
+FROM oven/bun:1.2.13 AS base
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files from project root (build context is already at root)
+COPY package.json ./
+COPY bun.lock ./
+COPY turbo.json ./
+
+# Copy all packages and apps
+COPY packages ./packages
+COPY apps ./apps
+
+# Install dependencies
+RUN bun install
+
+# Build the engine for Node.js target
+RUN cd apps/engine && bun build src/index.ts --outdir dist --target node
+
+# Set working directory to API
+WORKDIR /app/apps/api
+
+# Set environment variables
+ENV NODE_ENV=production
+ENV PORT=3000
+
+# Expose port
+EXPOSE 3000
+
+# Start the API
+CMD ["bun", "run", "src/index.ts"]
