@@ -39,13 +39,11 @@ export async function POST(request: Request) {
     }
 
     // Add user to team
-    const { error: memberError } = await supabase
-      .from("users_on_team")
-      .insert({
-        user_id: userId,
-        team_id: team.id,
-        role: "owner",
-      });
+    const { error: memberError } = await supabase.from("users_on_team").insert({
+      user_id: userId,
+      team_id: team.id,
+      role: "owner",
+    });
 
     if (memberError) {
       return NextResponse.json(
