@@ -27,7 +27,7 @@ RUN bun install
 COPY --from=builder /app/out/full/ .
 
 # Build the engine during Docker build
-RUN cd /app/apps/engine && bun build src/index.ts --outdir dist
+RUN cd /app/apps/engine && bun build src/index.ts --outdir dist --target node
 
 # Runner stage (same as installer to avoid another copy)
 FROM installer AS runner
