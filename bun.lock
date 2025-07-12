@@ -6,8 +6,12 @@
       "dependencies": {
         "@biomejs/biome": "1.9.4",
         "@manypkg/cli": "^0.24.0",
+        "@trigger.dev/sdk": "^3.3.17",
         "turbo": "2.5.4",
         "typescript": "^5.8.3",
+      },
+      "devDependencies": {
+        "@trigger.dev/build": "^3.3.17",
       },
     },
     "apps/api": {
