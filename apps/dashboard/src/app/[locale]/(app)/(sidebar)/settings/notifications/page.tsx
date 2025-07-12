@@ -1,6 +1,4 @@
-import { NotificationsSettingsList } from "@/components/notifications-settings-list";
 import type { Metadata } from "next";
-import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Notifications | Midday",
@@ -8,8 +6,11 @@ export const metadata: Metadata = {
 
 export default async function Notifications() {
   return (
-    <Suspense>
-      <NotificationsSettingsList />
-    </Suspense>
+    <div className="p-4">
+      <h1 className="text-xl font-semibold">Notifications</h1>
+      <p className="text-muted-foreground mt-2">
+        Notifications feature is temporarily disabled during initial deployment.
+      </p>
+    </div>
   );
 }
