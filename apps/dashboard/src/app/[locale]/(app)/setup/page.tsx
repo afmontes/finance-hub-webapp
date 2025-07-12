@@ -1,44 +1,99 @@
-import { SetupForm } from "@/components/setup-form";
-import { getQueryClient, trpc } from "@/trpc/server";
-import { HydrateClient } from "@/trpc/server";
-import { Icons } from "@midday/ui/icons";
-import type { Metadata } from "next";
-import Link from "next/link";
-import { redirect } from "next/navigation";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Setup account | Midday",
-};
+import { Button } from "@midday/ui/button";
+import { Input } from "@midday/ui/input";
+import { Label } from "@midday/ui/label";
+import { useState } from "react";
 
-export default async function Page() {
-  const queryClient = getQueryClient();
-  const user = await queryClient.fetchQuery(trpc.user.me.queryOptions());
+export default function SetupPage() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (!user?.id) {
-    return redirect("/");
-  }
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData);
+
+    try {
+      const response = await fetch("/api/setup/create-initial-team", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert("Team created successfully!");
+        window.location.href = "/";
+      } else {
+        alert(`Error: ${result.error}`);
+      }
+    } catch (error) {
+      alert(
+        `Failed to create team: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
-    <div>
-      <div className="absolute left-5 top-4 md:left-10 md:top-10">
-        <Link href="/">
-          <Icons.LogoSmall />
-        </Link>
-      </div>
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-6">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold">Setup Your Team</h1>
+          <p className="text-gray-600 mt-2">
+            Create your first team to get started with your finance hub.
+          </p>
+        </div>
 
-      <div className="flex min-h-screen justify-center items-center overflow-hidden p-6 md:p-0">
-        <div className="relative z-20 m-auto flex w-full max-w-[380px] flex-col">
-          <div className="text-center">
-            <h1 className="text-lg mb-2 font-serif">Update your account</h1>
-            <p className="text-[#878787] text-sm mb-8">
-              Add your name and an optional avatar.
-            </p>
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <div>
+            <Label htmlFor="name">Team Name</Label>
+            <Input
+              id="name"
+              name="name"
+              placeholder="My Finance Team"
+              required
+            />
           </div>
 
-          <HydrateClient>
-            <SetupForm />
-          </HydrateClient>
-        </div>
+          <div>
+            <Label htmlFor="baseCurrency">Currency</Label>
+            <select
+              id="baseCurrency"
+              name="baseCurrency"
+              className="w-full p-2 border rounded-md"
+              required
+            >
+              <option value="USD">USD - US Dollar</option>
+              <option value="CAD">CAD - Canadian Dollar</option>
+              <option value="EUR">EUR - Euro</option>
+              <option value="GBP">GBP - British Pound</option>
+            </select>
+          </div>
+
+          <div>
+            <Label htmlFor="countryCode">Country</Label>
+            <select
+              id="countryCode"
+              name="countryCode"
+              className="w-full p-2 border rounded-md"
+              required
+            >
+              <option value="US">United States</option>
+              <option value="CA">Canada</option>
+              <option value="GB">United Kingdom</option>
+              <option value="DE">Germany</option>
+            </select>
+          </div>
+
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? "Creating Team..." : "Create Team"}
+          </Button>
+        </form>
       </div>
     </div>
   );
