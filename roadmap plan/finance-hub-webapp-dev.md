@@ -479,18 +479,6 @@ const requireFeature = (feature: keyof FeatureFlags) => {
 - Add custom transaction categories table
 - Implement audit logging for configuration changes
 
-### **Environment Configuration**
-```bash
-# Production Environment Variables
-NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-PLAID_CLIENT_ID=your-plaid-client-id
-PLAID_SECRET=your-plaid-secret
-PLAID_ENV=production
-DATABASE_URL=your-supabase-db-url
-```
-
 ## Cost Estimation
 
 ### **Personal Use - First Year (Revised)**

@@ -1,7 +1,9 @@
 import { Novu } from "@novu/node";
 import { nanoid } from "nanoid";
 
-const novu = new Novu(process.env.NOVU_API_KEY || process.env.NOVU_SECRET_KEY || "dummy_novu_secret");
+// Initialize with proper API key or a valid format that won't cause validation errors
+const novuKey = process.env.NOVU_API_KEY || process.env.NOVU_SECRET_KEY || "nv_dummy_key_12345678901234567890";
+const novu = new Novu(novuKey);
 
 const API_ENDPOINT = "https://api.novu.co/v1";
 
@@ -107,7 +109,7 @@ export async function getSubscriberPreferences({
     {
       method: "GET",
       headers: {
-        Authorization: `ApiKey ${process.env.NOVU_API_KEY || process.env.NOVU_SECRET_KEY || "dummy_novu_secret"}`,
+        Authorization: `ApiKey ${novuKey}`,
       },
     },
   );
@@ -135,7 +137,7 @@ export async function updateSubscriberPreference({
     {
       method: "PATCH",
       headers: {
-        Authorization: `ApiKey ${process.env.NOVU_API_KEY || process.env.NOVU_SECRET_KEY || "dummy_novu_secret"}`,
+        Authorization: `ApiKey ${novuKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
