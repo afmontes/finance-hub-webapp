@@ -1,7 +1,7 @@
 import { Novu } from "@novu/node";
 import { nanoid } from "nanoid";
 
-const novu = new Novu(process.env.NOVU_API_KEY!);
+const novu = new Novu(process.env.NOVU_API_KEY || process.env.NOVU_SECRET_KEY || "dummy_novu_secret");
 
 const API_ENDPOINT = "https://api.novu.co/v1";
 
@@ -107,7 +107,7 @@ export async function getSubscriberPreferences({
     {
       method: "GET",
       headers: {
-        Authorization: `ApiKey ${process.env.NOVU_API_KEY!}`,
+        Authorization: `ApiKey ${process.env.NOVU_API_KEY || process.env.NOVU_SECRET_KEY || "dummy_novu_secret"}`,
       },
     },
   );
@@ -135,7 +135,7 @@ export async function updateSubscriberPreference({
     {
       method: "PATCH",
       headers: {
-        Authorization: `ApiKey ${process.env.NOVU_API_KEY!}`,
+        Authorization: `ApiKey ${process.env.NOVU_API_KEY || process.env.NOVU_SECRET_KEY || "dummy_novu_secret"}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
