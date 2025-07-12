@@ -43,9 +43,7 @@ jobs:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           NOVU_API_KEY: ${{ secrets.NOVU_SECRET_KEY }}
           NOVU_SECRET_KEY: ${{ secrets.NOVU_SECRET_KEY }}
-        run: |
-          bunx trigger.dev@3.3.17 deploy
-        working-directory: packages/jobs
+        run: bunx turbo run deploy --filter=@midday/jobs
       - name: 🚀 Deploy to Vercel
         run: |
           bunx vercel deploy --prebuilt --prod --archive=tgz --token=${{ secrets.VERCEL_TOKEN }} > domain.txt

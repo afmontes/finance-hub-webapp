@@ -82,6 +82,16 @@
     "typecheck": {
       "dependsOn": ["^topo"],
       "outputs": []
+    },
+    "deploy": {
+      "env": [
+        "TRIGGER_ACCESS_TOKEN",
+        "TRIGGER_PROJECT_ID",
+        "RESEND_API_KEY",
+        "NOVU_API_KEY",
+        "NOVU_SECRET_KEY"
+      ],
+      "cache": false
     }
   }
 }
