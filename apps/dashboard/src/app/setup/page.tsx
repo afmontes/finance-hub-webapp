@@ -1,8 +1,44 @@
+"use client";
+
 import { Button } from "@midday/ui/button";
 import { Input } from "@midday/ui/input";
 import { Label } from "@midday/ui/label";
+import { useState } from "react";
 
 export default function SetupPage() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData);
+
+    try {
+      const response = await fetch("/api/setup/create-initial-team", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert("Team created successfully!");
+        window.location.href = "/";
+      } else {
+        alert(`Error: ${result.error}`);
+      }
+    } catch (error) {
+      alert(
+        `Failed to create team: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
@@ -13,7 +49,7 @@ export default function SetupPage() {
           </p>
         </div>
 
-        <form className="space-y-4" id="setup-form">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <Label htmlFor="name">Team Name</Label>
             <Input
@@ -54,41 +90,10 @@ export default function SetupPage() {
             </select>
           </div>
 
-          <Button type="submit" className="w-full">
-            Create Team
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? "Creating Team..." : "Create Team"}
           </Button>
         </form>
-
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-            document.getElementById('setup-form').addEventListener('submit', async (e) => {
-              e.preventDefault();
-              const formData = new FormData(e.target);
-              const data = Object.fromEntries(formData);
-              
-              try {
-                const response = await fetch('/api/setup/create-initial-team', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(data)
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                  alert('Team created successfully!');
-                  window.location.href = '/';
-                } else {
-                  alert('Error: ' + result.error);
-                }
-              } catch (error) {
-                alert('Failed to create team: ' + error.message);
-              }
-            });
-          `,
-          }}
-        />
       </div>
     </div>
   );
