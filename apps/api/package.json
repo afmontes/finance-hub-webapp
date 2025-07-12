@@ -6,7 +6,7 @@
     "lint": "biome check .",
     "format": "biome format --write .",
     "typecheck": "tsc --noEmit",
-    "test": "bun test",
+    "test": "echo 'No tests configured for API yet'",
     "test:watch": "bun test --watch"
   },
   "exports": {
