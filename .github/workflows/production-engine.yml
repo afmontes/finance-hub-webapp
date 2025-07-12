@@ -2,11 +2,13 @@ name: Production Deployment - Engine
 env:
   CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - apps/engine/**
+  # Temporarily disabled - missing CLOUDFLARE_API_TOKEN
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - apps/engine/**
+  workflow_dispatch:
 jobs:
   deploy-production:
     runs-on: ubuntu-latest
