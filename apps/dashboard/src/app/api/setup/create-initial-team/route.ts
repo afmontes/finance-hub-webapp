@@ -26,7 +26,7 @@ export async function POST(request: Request) {
       .from("teams")
       .insert({
         name: name || "My Team",
-        currency: baseCurrency || "USD",
+        base_currency: baseCurrency || "USD",
       })
       .select()
       .single();
