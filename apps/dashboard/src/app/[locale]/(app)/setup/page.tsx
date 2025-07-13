@@ -26,7 +26,10 @@ export default function SetupPage() {
       });
 
       console.log("📥 Response status:", response.status);
-      console.log("📥 Response headers:", Object.fromEntries(response.headers.entries()));
+      console.log(
+        "📥 Response headers:",
+        Object.fromEntries(response.headers.entries()),
+      );
 
       const result = await response.json();
       console.log("📋 Response result:", result);
@@ -37,7 +40,9 @@ export default function SetupPage() {
         window.location.href = "/";
       } else {
         console.error("❌ Team creation failed:", result);
-        alert(`Error: ${result.error}${result.details ? ` - ${result.details}` : ""}`);
+        alert(
+          `Error: ${result.error}${result.details ? ` - ${result.details}` : ""}`,
+        );
       }
     } catch (error) {
       console.error("💥 Exception during team creation:", error);

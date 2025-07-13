@@ -16,7 +16,10 @@ export async function POST(request: Request) {
     if (sessionError || !session?.user) {
       console.error("Authentication error:", sessionError);
       return NextResponse.json(
-        { error: "No authenticated user found", details: sessionError?.message },
+        {
+          error: "No authenticated user found",
+          details: sessionError?.message,
+        },
         { status: 401 },
       );
     }
