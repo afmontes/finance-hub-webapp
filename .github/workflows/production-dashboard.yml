@@ -11,6 +11,7 @@ on:
     paths:
       - apps/dashboard/**
       - packages/**
+  workflow_dispatch: # Allow manual triggering
 jobs:
   deploy-production:
     runs-on: ubuntu-latest
