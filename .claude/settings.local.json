@@ -13,7 +13,9 @@
       "Bash(ls:*)",
       "Bash(cat:*)",
       "Bash(grep:*)",
-      "WebFetch(domain:finance-hub-webapp-dashboard.vercel.app)"
+      "WebFetch(domain:finance-hub-webapp-dashboard.vercel.app)",
+      "Bash(gh workflow run:*)",
+      "Bash(gh run list:*)"
     ],
     "deny": []
   }
