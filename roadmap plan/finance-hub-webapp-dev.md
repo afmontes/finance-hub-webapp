@@ -443,10 +443,78 @@ Based on our deployment experience, here are the required fixes categorized by y
 3. **API Response Validation**: Confirm server response and error handling
 4. **Database Transaction Verification**: Check if team creation is actually occurring but UI feedback is broken
 
-#### **📝 DEVELOPMENT LOG CONTINUATION**
-**Previous Status**: All deployment infrastructure completed, RLS policies fixed
-**Current Focus**: Debugging silent team creation failure
-**Next Steps**: Client-side debugging → API verification → Database transaction analysis
+#### **📝 DEVELOPMENT LOG CONTINUATION - Phase 2**
+**Date**: July 13, 2025 - 18:00-22:00 UTC
+
+#### **Issue Resolution: Silent Team Creation Button**
+**Initial Symptom**: Button showed loading state briefly then became unresponsive
+**Analysis**: Added comprehensive debugging logs to team creation process
+
+**Critical Discovery**: Form was NOT using `/api/setup/create-initial-team` endpoint
+- **Actual endpoint**: tRPC `team.create` at `https://finance-hub-api.fly.dev/trpc/team.create`
+- **Network analysis**: Multiple 404 errors with "User not found" message
+- **Root cause**: Two separate setup implementations:
+  1. `/setup` page with custom API endpoint (our debugging implementation)
+  2. `/teams/create` page with tRPC CreateTeamForm (the actual form being used)
+
+#### **Issue Resolution: Missing User in API Database**
+**Date**: July 13, 2025 - 20:30 UTC
+**Root Cause**: Users exist in Supabase Auth (`auth.users`) but not in API database (`public.users`)
+
+**Analysis Process**:
+1. **JWT Token Inspection**: User ID `59c2d985-e917-43a6-854a-904d0dc55877` confirmed in authentication
+2. **Database Architecture Gap**: No automatic mechanism to sync auth users with API database
+3. **tRPC Middleware Expectation**: `team-permission.ts` expects users to exist in API database
+
+**Resolution Implemented**:
+1. **Database Trigger Creation** (`fix-user-creation.sql`):
+   ```sql
+   CREATE OR REPLACE FUNCTION public.handle_new_user()
+   CREATE TRIGGER on_auth_user_created ON auth.users
+   ```
+   - Automatically creates users in API database for new signups
+   - Ensures future users won't have this issue
+
+2. **Manual User Creation** (`manual-user-fix.sql`):
+   ```sql
+   INSERT INTO public.users (id, email, full_name, avatar_url, created_at)
+   VALUES ('59c2d985-e917-43a6-854a-904d0dc55877', ...)
+   ```
+   - Fixed immediate issue for current user
+   - User now exists in both auth and API databases
+
+**Verification**: "User not found" error resolved, tRPC calls now reach team creation logic
+
+#### **Issue Resolution: Missing Database Schema Columns**
+**Date**: July 13, 2025 - 22:10 UTC
+**New Error**: `Failed query: insert into "teams" (..., "country_code", ...)`
+
+**Analysis**: 
+- tRPC `team.create` expects `country_code` column in teams table
+- Database schema incomplete - missing columns that application code expects
+- **SQL Insert Attempted**: `INSERT INTO teams (id, created_at, name, logo_url, inbox_id, email, inbox_email, inbox_forwarding, base_currency, country_code, document_classification, flags, canceled_at, plan)`
+
+**Current Resolution in Progress**:
+- **Schema Fix** (`fix-teams-table.sql`): Adding missing `country_code` column
+- **Schema Audit**: Verifying all expected columns exist in teams table
+
+#### **Architecture Issues Identified**:
+1. **Database Schema Mismatch**: Supabase schema not matching application expectations
+2. **Missing Migration Application**: Database appears to have basic tables but not full schema
+3. **User Creation Gap**: No automatic sync between Supabase Auth and API database
+4. **Multiple Setup Flows**: Confusion between custom setup page and tRPC CreateTeamForm
+
+#### **Technical Debt Accumulated**:
+- **Debugging Code**: Extensive console logging added to setup page (to be cleaned up)
+- **Manual Fixes**: User creation and schema fixes applied manually (should be in migrations)
+- **Schema Inconsistency**: Need to audit and apply complete database schema
+
+#### **Current Status** (July 13, 2025 - 22:15 UTC):
+- ✅ **User Creation Issue**: Resolved via database trigger + manual user creation
+- ✅ **RLS Policies**: Secure team creation policies active
+- 🔄 **Teams Table Schema**: Adding missing `country_code` column
+- ⏳ **Team Creation**: Pending schema fix completion
+- 📝 **Next**: Complete schema audit and successful team creation test
 
 ---
 
