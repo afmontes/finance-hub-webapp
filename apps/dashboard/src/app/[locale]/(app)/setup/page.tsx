@@ -10,32 +10,42 @@ export default function SetupPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log("🚀 Team creation started");
     setIsSubmitting(true);
 
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData);
+    console.log("📝 Form data:", data);
 
     try {
+      console.log("📡 Making API call to /api/setup/create-initial-team");
       const response = await fetch("/api/setup/create-initial-team", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
+      console.log("📥 Response status:", response.status);
+      console.log("📥 Response headers:", Object.fromEntries(response.headers.entries()));
+
       const result = await response.json();
+      console.log("📋 Response result:", result);
 
       if (result.success) {
+        console.log("✅ Team created successfully!");
         alert("Team created successfully!");
         window.location.href = "/";
       } else {
-        console.error("Team creation failed:", result);
+        console.error("❌ Team creation failed:", result);
         alert(`Error: ${result.error}${result.details ? ` - ${result.details}` : ""}`);
       }
     } catch (error) {
+      console.error("💥 Exception during team creation:", error);
       alert(
         `Failed to create team: ${error instanceof Error ? error.message : String(error)}`,
       );
     } finally {
+      console.log("🏁 Team creation finished, resetting button");
       setIsSubmitting(false);
     }
   };
