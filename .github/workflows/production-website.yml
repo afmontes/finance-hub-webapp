@@ -6,13 +6,15 @@ env:
   TURBO_TEAM: ${{ secrets.VERCEL_ORG_ID }}
   NODE_OPTIONS: --max-old-space-size=4096
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - apps/website/**
-      - packages/**
-      - "!packages/email/**"
+  # Temporarily disabled until VERCEL_PROJECT_ID_WEBSITE is configured
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - apps/website/**
+  #     - packages/**
+  #     - "!packages/email/**"
+  workflow_dispatch: # Allow manual triggering only
 jobs:
   deploy-production:
     runs-on: ubuntu-latest
