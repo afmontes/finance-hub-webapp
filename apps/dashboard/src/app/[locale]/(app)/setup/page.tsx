@@ -28,7 +28,8 @@ export default function SetupPage() {
         alert("Team created successfully!");
         window.location.href = "/";
       } else {
-        alert(`Error: ${result.error}`);
+        console.error("Team creation failed:", result);
+        alert(`Error: ${result.error}${result.details ? ` - ${result.details}` : ""}`);
       }
     } catch (error) {
       alert(

@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   try {
     const { name, countryCode, baseCurrency } = await request.json();
+    console.log("Team creation request:", { name, countryCode, baseCurrency });
     const supabase = await createClient();
 
     // Get the current user
@@ -13,13 +14,15 @@ export async function POST(request: Request) {
     } = await supabase.auth.getSession();
 
     if (sessionError || !session?.user) {
+      console.error("Authentication error:", sessionError);
       return NextResponse.json(
-        { error: "No authenticated user found" },
+        { error: "No authenticated user found", details: sessionError?.message },
         { status: 401 },
       );
     }
 
     const userId = session.user.id;
+    console.log("Authenticated user:", userId);
 
     // Create team
     const { data: team, error: teamError } = await supabase
