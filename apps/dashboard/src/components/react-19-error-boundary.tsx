@@ -86,4 +86,3 @@ export class React19ErrorBoundary extends React.Component<
     return this.props.children;
   }
 }
-
