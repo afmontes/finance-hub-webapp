@@ -72,7 +72,6 @@ export function TrackerWidget() {
     }),
   });
 
-  // @ts-expect-error
   useOnClickOutside(ref, () => {
     if (range?.length === 1) {
       setParams({ range: null });
