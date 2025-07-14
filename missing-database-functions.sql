@@ -198,6 +198,93 @@ BEGIN
 END
 $$;
 
+-- 7. CREATE INVOICES TABLE (missing from schema)
+CREATE TABLE IF NOT EXISTS "invoices" (
+  "id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+  "created_at" timestamp with time zone DEFAULT now() NOT NULL,
+  "team_id" uuid NOT NULL,
+  "invoice_number" text NOT NULL,
+  "status" text DEFAULT 'draft',
+  "amount" numeric,
+  "due_date" date,
+  "customer_id" uuid,
+  "customer_name" text,
+  "customer_details" jsonb,
+  "from_details" jsonb,
+  "payment_details" jsonb,
+  "note_details" jsonb,
+  "line_items" jsonb,
+  "currency" text DEFAULT 'USD',
+  "tax" numeric,
+  "discount" numeric,
+  "subtotal" numeric,
+  "vat" numeric,
+  "template" jsonb,
+  "user_id" uuid,
+  "sent_at" timestamp with time zone,
+  "paid_at" timestamp with time zone,
+  "reminder_sent_at" timestamp with time zone,
+  "token" text,
+  CONSTRAINT "invoices_team_id_fkey" FOREIGN KEY ("team_id") REFERENCES "teams"("id") ON DELETE cascade,
+  CONSTRAINT "invoices_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE set null
+);
+
+-- Enable RLS for invoices
+ALTER TABLE "invoices" ENABLE ROW LEVEL SECURITY;
+
+-- Create RLS policies for invoices
+CREATE POLICY "invoices_team_access" ON "invoices" 
+  FOR ALL USING (true); -- Simplified for now
+
+-- 8. CREATE INVOICE_TEMPLATES TABLE (missing from schema)
+CREATE TABLE IF NOT EXISTS "invoice_templates" (
+  "id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+  "created_at" timestamp with time zone DEFAULT now() NOT NULL,
+  "team_id" uuid NOT NULL,
+  "title" text,
+  "customer_label" text,
+  "from_label" text,
+  "invoice_no_label" text,
+  "issue_date_label" text,
+  "due_date_label" text,
+  "description_label" text,
+  "price_label" text,
+  "quantity_label" text,
+  "total_label" text,
+  "subtotal_label" text,
+  "vat_label" text,
+  "tax_label" text,
+  "payment_label" text,
+  "note_label" text,
+  "logo_url" text,
+  "currency" text,
+  "size" text,
+  "include_vat" boolean DEFAULT true,
+  "include_tax" boolean DEFAULT false,
+  "include_discount" boolean DEFAULT false,
+  "include_decimals" boolean DEFAULT false,
+  "include_units" boolean DEFAULT false,
+  "include_qr" boolean DEFAULT true,
+  "include_pdf" boolean DEFAULT false,
+  "send_copy" boolean DEFAULT false,
+  "date_format" text,
+  "delivery_type" text,
+  "tax_rate" numeric DEFAULT 0,
+  "vat_rate" numeric DEFAULT 0,
+  "discount_label" text,
+  "total_summary_label" text,
+  "payment_details" jsonb,
+  "from_details" jsonb,
+  CONSTRAINT "invoice_templates_team_id_fkey" FOREIGN KEY ("team_id") REFERENCES "teams"("id") ON DELETE cascade
+);
+
+-- Enable RLS for invoice_templates
+ALTER TABLE "invoice_templates" ENABLE ROW LEVEL SECURITY;
+
+-- Create RLS policies for invoice_templates
+CREATE POLICY "invoice_templates_team_access" ON "invoice_templates" 
+  FOR ALL USING (true); -- Simplified for now
+
 -- Grant execute permissions
 GRANT EXECUTE ON FUNCTION nanoid(integer, text, numeric) TO authenticated;
 GRANT EXECUTE ON FUNCTION nanoid(integer) TO authenticated;

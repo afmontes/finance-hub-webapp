@@ -16,6 +16,11 @@ import { TrackerScheduleSheet } from "@/components/sheets/tracker-schedule-sheet
 import { TrackerUpdateSheet } from "@/components/sheets/tracker-update-sheet";
 import { TransactionCreateSheet } from "@/components/sheets/transaction-create-sheet";
 import { TransactionSheet } from "@/components/sheets/transaction-sheet";
+import {
+  isCustomerFeatureEnabled,
+  isInvoiceFeatureEnabled,
+  isTrackerFeatureEnabled,
+} from "@/utils/feature-flags";
 import { uniqueCurrencies } from "@midday/location/currencies";
 import { use } from "react";
 
@@ -30,13 +35,7 @@ export function GlobalSheets({ currencyPromise, countryCodePromise }: Props) {
 
   return (
     <>
-      <TrackerUpdateSheet defaultCurrency={currency} />
-      <TrackerCreateSheet defaultCurrency={currency} />
-      <TrackerScheduleSheet />
-
-      <CustomerCreateSheet />
-      <CustomerEditSheet />
-
+      {/* Core transaction features - always enabled */}
       <TransactionSheet />
       <TransactionCreateSheet />
 
@@ -50,8 +49,28 @@ export function GlobalSheets({ currencyPromise, countryCodePromise }: Props) {
       <ImportModal currencies={uniqueCurrencies} defaultCurrency={currency} />
       <ConnectTransactionsModal countryCode={countryCode} />
 
-      <InvoiceDetailsSheet />
-      <InvoiceSheet />
+      {/* Conditional feature sheets */}
+      {isTrackerFeatureEnabled() && (
+        <>
+          <TrackerUpdateSheet defaultCurrency={currency} />
+          <TrackerCreateSheet defaultCurrency={currency} />
+          <TrackerScheduleSheet />
+        </>
+      )}
+
+      {isCustomerFeatureEnabled() && (
+        <>
+          <CustomerCreateSheet />
+          <CustomerEditSheet />
+        </>
+      )}
+
+      {isInvoiceFeatureEnabled() && (
+        <>
+          <InvoiceDetailsSheet />
+          <InvoiceSheet />
+        </>
+      )}
     </>
   );
 }
