@@ -172,22 +172,15 @@ function useToast() {
   const [state, setState] = React.useState<State>(memoryState);
 
   React.useEffect(() => {
-    // Use React.startTransition to prevent flushSync issues in React 19
-    const stateListener = (newState: State) => {
-      React.startTransition(() => {
-        setState(newState);
-      });
-    };
-    
-    listeners.push(stateListener);
+    listeners.push(setState);
     return () => {
-      const index = listeners.indexOf(stateListener);
+      const index = listeners.indexOf(setState);
 
       if (index > -1) {
         listeners.splice(index, 1);
       }
     };
-  }, []);
+  }, [setState]);
 
   return {
     ...state,

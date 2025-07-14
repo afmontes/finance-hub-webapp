@@ -73,11 +73,8 @@ const Carousel = React.forwardRef<
         return;
       }
 
-      // Use React.startTransition to prevent flushSync issues in React 19
-      React.startTransition(() => {
-        setCanScrollPrev(api.canScrollPrev());
-        setCanScrollNext(api.canScrollNext());
-      });
+      setCanScrollPrev(api.canScrollPrev());
+      setCanScrollNext(api.canScrollNext());
     }, []);
 
     const scrollPrev = React.useCallback(() => {
