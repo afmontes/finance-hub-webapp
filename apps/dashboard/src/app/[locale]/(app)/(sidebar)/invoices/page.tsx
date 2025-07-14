@@ -36,17 +36,20 @@ function FeatureDisabledPage() {
       <div className="flex items-center justify-center w-16 h-16 rounded-full bg-muted">
         <Icons.Invoice size={32} className="text-muted-foreground" />
       </div>
-      
+
       <div className="space-y-2">
         <h2 className="text-2xl font-semibold">Invoice Feature Disabled</h2>
         <p className="text-muted-foreground max-w-md">
-          The invoice functionality has been disabled in this application. 
-          This helps focus on core personal finance tracking features.
+          The invoice functionality has been disabled in this application. This
+          helps focus on core personal finance tracking features.
         </p>
       </div>
-      
+
       <div className="text-sm text-muted-foreground">
-        <p>To enable this feature, contact your administrator or check your configuration.</p>
+        <p>
+          To enable this feature, contact your administrator or check your
+          configuration.
+        </p>
       </div>
     </div>
   );

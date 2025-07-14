@@ -1,7 +1,5 @@
 "use client";
 
-import { cn } from "@midday/ui/cn";
-import { Icons } from "@midday/ui/icons";
 import {
   isAppsFeatureEnabled,
   isCustomerFeatureEnabled,
@@ -9,6 +7,8 @@ import {
   isInvoiceFeatureEnabled,
   isTrackerFeatureEnabled,
 } from "@/utils/feature-flags";
+import { cn } from "@midday/ui/cn";
+import { Icons } from "@midday/ui/icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
@@ -297,7 +297,12 @@ type Props = {
 function getEnabledItems() {
   return items.filter((item) => {
     // Always show core features
-    if (item.path === "/" || item.path === "/transactions" || item.path === "/vault" || item.path === "/settings") {
+    if (
+      item.path === "/" ||
+      item.path === "/transactions" ||
+      item.path === "/vault" ||
+      item.path === "/settings"
+    ) {
       return true;
     }
 
