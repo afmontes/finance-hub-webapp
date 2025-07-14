@@ -2,6 +2,13 @@
 
 import { cn } from "@midday/ui/cn";
 import { Icons } from "@midday/ui/icons";
+import {
+  isAppsFeatureEnabled,
+  isCustomerFeatureEnabled,
+  isInboxFeatureEnabled,
+  isInvoiceFeatureEnabled,
+  isTrackerFeatureEnabled,
+} from "@/utils/feature-flags";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
@@ -287,15 +294,44 @@ type Props = {
   isExpanded?: boolean;
 };
 
+function getEnabledItems() {
+  return items.filter((item) => {
+    // Always show core features
+    if (item.path === "/" || item.path === "/transactions" || item.path === "/vault" || item.path === "/settings") {
+      return true;
+    }
+
+    // Filter based on feature flags
+    if (item.path === "/invoices" && !isInvoiceFeatureEnabled()) {
+      return false;
+    }
+    if (item.path === "/inbox" && !isInboxFeatureEnabled()) {
+      return false;
+    }
+    if (item.path === "/tracker" && !isTrackerFeatureEnabled()) {
+      return false;
+    }
+    if (item.path === "/customers" && !isCustomerFeatureEnabled()) {
+      return false;
+    }
+    if (item.path === "/apps" && !isAppsFeatureEnabled()) {
+      return false;
+    }
+
+    return true;
+  });
+}
+
 export function MainMenu({ onSelect, isExpanded = false }: Props) {
   const pathname = usePathname();
   const part = pathname?.split("/")[1];
+  const enabledItems = getEnabledItems();
 
   return (
     <div className="mt-6 w-full">
       <nav className="w-full">
         <div className="flex flex-col gap-2">
-          {items.map((item) => {
+          {enabledItems.map((item) => {
             const isActive =
               (pathname === "/" && item.path === "/") ||
               (pathname !== "/" && item.path.startsWith(`/${part}`));

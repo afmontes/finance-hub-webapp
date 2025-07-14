@@ -14,8 +14,11 @@ import { loadInvoiceFilterParams } from "@/hooks/use-invoice-filter-params";
 import { loadSortParams } from "@/hooks/use-sort-params";
 import { batchPrefetch, trpc } from "@/trpc/server";
 import { getInitialInvoicesColumnVisibility } from "@/utils/columns";
+import { isInvoiceFeatureEnabled } from "@/utils/feature-flags";
+import { Icons } from "@midday/ui/icons";
 import type { Metadata } from "next";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
+import { redirect } from "next/navigation";
 import type { SearchParams } from "nuqs";
 import { Suspense } from "react";
 
@@ -27,7 +30,34 @@ type Props = {
   searchParams: Promise<SearchParams>;
 };
 
+function FeatureDisabledPage() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
+      <div className="flex items-center justify-center w-16 h-16 rounded-full bg-muted">
+        <Icons.Invoice size={32} className="text-muted-foreground" />
+      </div>
+      
+      <div className="space-y-2">
+        <h2 className="text-2xl font-semibold">Invoice Feature Disabled</h2>
+        <p className="text-muted-foreground max-w-md">
+          The invoice functionality has been disabled in this application. 
+          This helps focus on core personal finance tracking features.
+        </p>
+      </div>
+      
+      <div className="text-sm text-muted-foreground">
+        <p>To enable this feature, contact your administrator or check your configuration.</p>
+      </div>
+    </div>
+  );
+}
+
 export default async function Page(props: Props) {
+  // Check if invoice feature is enabled
+  if (!isInvoiceFeatureEnabled()) {
+    return <FeatureDisabledPage />;
+  }
+
   const searchParams = await props.searchParams;
 
   const filter = loadInvoiceFilterParams(searchParams);
