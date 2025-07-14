@@ -23,17 +23,18 @@ export default async function Layout({
   const countryCodePromise = getCountryCode();
 
   // NOTE: These are used in the global sheets
-  const prefetchQueries = [
-    trpc.team.current.queryOptions(),
-    trpc.search.global.queryOptions({ searchTerm: "" }),
-  ];
-
-  // Only prefetch invoice settings if invoice feature is enabled
   if (isInvoiceFeatureEnabled()) {
-    prefetchQueries.push(trpc.invoice.defaultSettings.queryOptions());
+    batchPrefetch([
+      trpc.team.current.queryOptions(),
+      trpc.invoice.defaultSettings.queryOptions(),
+      trpc.search.global.queryOptions({ searchTerm: "" }),
+    ]);
+  } else {
+    batchPrefetch([
+      trpc.team.current.queryOptions(),
+      trpc.search.global.queryOptions({ searchTerm: "" }),
+    ]);
   }
-
-  batchPrefetch(prefetchQueries);
 
   // NOTE: Right now we want to fetch the user and hydrate the client
   // Next steps would be to prefetch and suspense
