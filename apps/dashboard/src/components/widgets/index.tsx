@@ -47,7 +47,9 @@ export function Widgets() {
     // Conditionally include feature-specific widgets
     ...(isInvoiceFeatureEnabled() ? [<Invoice key="invoice" />] : []),
     ...(isTrackerFeatureEnabled() ? [<Tracker key="tracker" />] : []),
-    ...(isInboxFeatureEnabled() ? [<Inbox key="inbox" disabled={disabled} />] : []),
+    ...(isInboxFeatureEnabled()
+      ? [<Inbox key="inbox" disabled={disabled} />]
+      : []),
   ];
 
   return (
