@@ -1,26 +1,8 @@
-import { ErrorFallback } from "@/components/error-fallback";
-import { InvoiceHeader } from "@/components/invoice-header";
-import {
-  InvoicePaymentScore,
-  InvoicePaymentScoreSkeleton,
-} from "@/components/invoice-payment-score";
-import { InvoiceSummarySkeleton } from "@/components/invoice-summary";
-import { InvoicesOpen } from "@/components/invoices-open";
-import { InvoicesOverdue } from "@/components/invoices-overdue";
-import { InvoicesPaid } from "@/components/invoices-paid";
-import { DataTable } from "@/components/tables/invoices/data-table";
-import { InvoiceSkeleton } from "@/components/tables/invoices/skeleton";
-import { loadInvoiceFilterParams } from "@/hooks/use-invoice-filter-params";
-import { loadSortParams } from "@/hooks/use-sort-params";
-import { batchPrefetch, trpc } from "@/trpc/server";
-import { getInitialInvoicesColumnVisibility } from "@/utils/columns";
 import { isInvoiceFeatureEnabled } from "@/utils/feature-flags";
 import { Icons } from "@midday/ui/icons";
 import type { Metadata } from "next";
-import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import { redirect } from "next/navigation";
 import type { SearchParams } from "nuqs";
-import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Invoices | Midday",
@@ -56,10 +38,30 @@ function FeatureDisabledPage() {
 }
 
 export default async function Page(props: Props) {
-  // Check if invoice feature is enabled
+  // Check if invoice feature is enabled - redirect if disabled
   if (!isInvoiceFeatureEnabled()) {
     return <FeatureDisabledPage />;
   }
+
+  // Dynamically import invoice components only when feature is enabled
+  const { ErrorFallback } = await import("@/components/error-fallback");
+  const { InvoiceHeader } = await import("@/components/invoice-header");
+  const {
+    InvoicePaymentScore,
+    InvoicePaymentScoreSkeleton,
+  } = await import("@/components/invoice-payment-score");
+  const { InvoiceSummarySkeleton } = await import("@/components/invoice-summary");
+  const { InvoicesOpen } = await import("@/components/invoices-open");
+  const { InvoicesOverdue } = await import("@/components/invoices-overdue");
+  const { InvoicesPaid } = await import("@/components/invoices-paid");
+  const { DataTable } = await import("@/components/tables/invoices/data-table");
+  const { InvoiceSkeleton } = await import("@/components/tables/invoices/skeleton");
+  const { loadInvoiceFilterParams } = await import("@/hooks/use-invoice-filter-params");
+  const { loadSortParams } = await import("@/hooks/use-sort-params");
+  const { batchPrefetch, trpc } = await import("@/trpc/server");
+  const { getInitialInvoicesColumnVisibility } = await import("@/utils/columns");
+  const { ErrorBoundary } = await import("next/dist/client/components/error-boundary");
+  const { Suspense } = await import("react");
 
   const searchParams = await props.searchParams;
 

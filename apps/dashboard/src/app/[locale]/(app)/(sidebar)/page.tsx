@@ -8,6 +8,7 @@ import { loadMetricsParams } from "@/hooks/use-metrics-params";
 import { HydrateClient, batchPrefetch, trpc } from "@/trpc/server";
 import { getQueryClient } from "@/trpc/server";
 import { Cookies } from "@/utils/constants";
+import { isInvoiceFeatureEnabled } from "@/utils/feature-flags";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import type { SearchParams } from "nuqs";
@@ -29,9 +30,8 @@ export default async function Overview(props: Props) {
   const hideConnectFlow =
     cookieStore.get(Cookies.HideConnectFlow)?.value === "true";
 
-  batchPrefetch([
-    trpc.invoice.get.queryOptions({ pageSize: 10 }),
-    trpc.invoice.paymentStatus.queryOptions(),
+  // Build prefetch queries conditionally based on feature flags
+  const prefetchQueries = [
     trpc.metrics.expense.queryOptions({
       from,
       to,
@@ -52,7 +52,6 @@ export default async function Overview(props: Props) {
       to,
       currency: currency ?? undefined,
     }),
-    trpc.inbox.get.queryOptions(),
     trpc.bankAccounts.balances.queryOptions(),
     trpc.documents.get.queryOptions({ pageSize: 10 }),
     trpc.metrics.spending.queryOptions({
@@ -63,7 +62,20 @@ export default async function Overview(props: Props) {
     trpc.transactions.get.queryOptions({
       pageSize: 15,
     }),
-  ]);
+  ];
+
+  // Only add invoice queries if invoice feature is enabled
+  if (isInvoiceFeatureEnabled()) {
+    prefetchQueries.push(
+      trpc.invoice.get.queryOptions({ pageSize: 10 }),
+      trpc.invoice.paymentStatus.queryOptions(),
+    );
+  }
+
+  // Only add inbox queries if inbox feature is enabled (currently always enabled)
+  prefetchQueries.push(trpc.inbox.get.queryOptions());
+
+  batchPrefetch(prefetchQueries);
 
   // Load the data for the first visible chart
   await Promise.all([

@@ -2,6 +2,12 @@
 
 import { useTRPC } from "@/trpc/client";
 import {
+  isCustomerFeatureEnabled,
+  isInboxFeatureEnabled,
+  isInvoiceFeatureEnabled,
+  isTrackerFeatureEnabled,
+} from "@/utils/feature-flags";
+import {
   Carousel,
   CarouselContent,
   CarouselItem,
@@ -35,12 +41,13 @@ export function Widgets() {
   const items = [
     <Assistant key="assistant" />,
     <Spending disabled={disabled} key="spending" />,
-    <Invoice key="invoice" />,
     <Transactions disabled={disabled} key="transactions" />,
-    <Tracker key="tracker" />,
-    <Inbox key="inbox" disabled={disabled} />,
     <AccountBalance key="account-balance" />,
     <Vault key="vault" />,
+    // Conditionally include feature-specific widgets
+    ...(isInvoiceFeatureEnabled() ? [<Invoice key="invoice" />] : []),
+    ...(isTrackerFeatureEnabled() ? [<Tracker key="tracker" />] : []),
+    ...(isInboxFeatureEnabled() ? [<Inbox key="inbox" disabled={disabled} />] : []),
   ];
 
   return (
