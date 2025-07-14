@@ -30,8 +30,8 @@ export default async function Overview(props: Props) {
   const hideConnectFlow =
     cookieStore.get(Cookies.HideConnectFlow)?.value === "true";
 
-  // Build prefetch queries conditionally based on feature flags
-  const prefetchQueries = [
+  // Prefetch core queries (always enabled)
+  batchPrefetch([
     trpc.metrics.expense.queryOptions({
       from,
       to,
@@ -62,20 +62,16 @@ export default async function Overview(props: Props) {
     trpc.transactions.get.queryOptions({
       pageSize: 15,
     }),
-  ];
+    trpc.inbox.get.queryOptions(),
+  ]);
 
-  // Only add invoice queries if invoice feature is enabled
+  // Conditionally prefetch invoice queries if feature is enabled
   if (isInvoiceFeatureEnabled()) {
-    prefetchQueries.push(
+    batchPrefetch([
       trpc.invoice.get.queryOptions({ pageSize: 10 }),
       trpc.invoice.paymentStatus.queryOptions(),
-    );
+    ]);
   }
-
-  // Only add inbox queries if inbox feature is enabled (currently always enabled)
-  prefetchQueries.push(trpc.inbox.get.queryOptions());
-
-  batchPrefetch(prefetchQueries);
 
   // Load the data for the first visible chart
   await Promise.all([
