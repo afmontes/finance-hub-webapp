@@ -1,3 +1,5 @@
+import { ErrorInterceptor } from "@/components/debug/error-interceptor";
+import { TRPCCallTracker } from "@/components/debug/trpc-call-tracker";
 import { ExportStatus } from "@/components/export-status";
 import { Header } from "@/components/header";
 import { GlobalSheets } from "@/components/sheets/global-sheets";
@@ -54,6 +56,10 @@ export default async function Layout({
 
   return (
     <HydrateClient>
+      {/* Debug components - only active in debug mode */}
+      <ErrorInterceptor />
+      <TRPCCallTracker />
+      
       <div className="relative">
         <Sidebar />
 
